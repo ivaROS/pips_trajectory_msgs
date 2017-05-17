@@ -1,8 +1,8 @@
 #ifndef TF2_TRAJECTORY_H
 #define TF2_TRAJECTORY_H
 
-#include <trajectory_generator/trajectory_point.h>
-#include <trajectory_generator/trajectory_points.h>
+#include <pips_trajectory_msgs/trajectory_point.h>
+#include <pips_trajectory_msgs/trajectory_points.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <Eigen/Eigen>
 #include <tf2/convert.h>  //needed to give access to templates
@@ -12,7 +12,7 @@ namespace tf2
 {
 
 inline
-  void doTransform(const trajectory_generator::trajectory_point& p_in, trajectory_generator::trajectory_point& p_out, const Eigen::Affine3d& transform, double rotation)
+  void doTransform(const pips_trajectory_msgs::trajectory_point& p_in, pips_trajectory_msgs::trajectory_point& p_out, const Eigen::Affine3d& transform, double rotation)
   {
       Eigen::Vector3d pos(p_in.x,p_in.y,0);
       pos = transform * pos;
@@ -34,16 +34,16 @@ inline
 // method to extract timestamp from object
 template <>
 inline
-  const ros::Time& getTimestamp(const trajectory_generator::trajectory_points& t) {return t.header.stamp;}
+  const ros::Time& getTimestamp(const pips_trajectory_msgs::trajectory_points& t) {return t.header.stamp;}
 
 // method to extract frame id from object
 template <>
 inline
-  const std::string& getFrameId(const trajectory_generator::trajectory_points& t) {return t.header.frame_id;}
+  const std::string& getFrameId(const pips_trajectory_msgs::trajectory_points& t) {return t.header.frame_id;}
 
 // this method needs to be implemented by client library developers
 template <>
-  void doTransform(const trajectory_generator::trajectory_points& t_in, trajectory_generator::trajectory_points& t_out, const geometry_msgs::TransformStamped& transform_stamped)
+  void doTransform(const pips_trajectory_msgs::trajectory_points& t_in, pips_trajectory_msgs::trajectory_points& t_out, const geometry_msgs::TransformStamped& transform_stamped)
   {
     
     Eigen::Affine3d transform = tf2::transformToEigen(transform_stamped);     
@@ -52,8 +52,8 @@ template <>
     
     for(size_t i = 0; i < t_in.points.size(); i++)
     {
-      trajectory_generator::trajectory_point point;
-      doTransform((trajectory_generator::trajectory_point)t_in.points[i], point, transform, rotation);
+      pips_trajectory_msgs::trajectory_point point;
+      doTransform((pips_trajectory_msgs::trajectory_point)t_in.points[i], point, transform, rotation);
       t_out.points.push_back(point);
     
     }
@@ -70,16 +70,16 @@ template <>
 // method to extract timestamp from object
 template <>
 inline
-  const ros::Time& getTimestamp(const trajectory_generator::trajectory_pointsPtr& t) {return t->header.stamp;}
+  const ros::Time& getTimestamp(const pips_trajectory_msgs::trajectory_pointsPtr& t) {return t->header.stamp;}
 
 // method to extract frame id from object
 template <>
 inline
-  const std::string& getFrameId(const trajectory_generator::trajectory_pointsPtr& t) {return t->header.frame_id;}
+  const std::string& getFrameId(const pips_trajectory_msgs::trajectory_pointsPtr& t) {return t->header.frame_id;}
 
 // this method needs to be implemented by client library developers
 template <>
-  void doTransform(const trajectory_generator::trajectory_pointsPtr& t_in, trajectory_generator::trajectory_pointsPtr& t_out, const geometry_msgs::TransformStamped& transform_stamped)
+  void doTransform(const pips_trajectory_msgs::trajectory_pointsPtr& t_in, pips_trajectory_msgs::trajectory_pointsPtr& t_out, const geometry_msgs::TransformStamped& transform_stamped)
   {
     doTransform(*t_in,*t_out,transform_stamped);
   
